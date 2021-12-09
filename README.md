@@ -1,7 +1,11 @@
-MRFIXIT Rockchip Kernel:
+# RG552-linux kernel
 
-This is a fork of Rockchip's BSP kernel, located here: https://github.com/rockchip-linux/kernel
+This is a fork of Rockchip's BSP 4.4 kernel, located here: https://github.com/rockchip-linux/kernel
 
-This fork has lots of patches, mainline backports, and custom fixes.
+Provide reference for open source systems such as batocera.linux. (Currently under experiment) 
 
-All work has specifically been to support these boards in MrFixIt's releases (found in his other GitHub repositories): RockPi4, Rock64, Rockbox, Pinebook Pro, and Rockpro64
+# Thanks
+
+MRFIXIT (https://github.com/mrfixit2001)
+
+And thank all the developers who commit for the kernel. 
