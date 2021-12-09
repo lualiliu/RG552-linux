@@ -113,6 +113,7 @@ struct panel_simple {
 	struct i2c_adapter *ddc;
 
 	struct gpio_desc *enable_gpio;
+	struct gpio_desc *enable1_gpio;
 	struct gpio_desc *reset_gpio;
 	int cmd_type;
 
@@ -122,6 +123,8 @@ struct panel_simple {
 
 	struct panel_cmds *on_cmds;
 	struct panel_cmds *off_cmds;
+	struct pinctrl *pinctrl;
+	struct pinctrl_state *active_state;
 	struct device_node *np_crtc;
 };
 
@@ -608,10 +611,13 @@ static int panel_simple_unprepare(struct drm_panel *panel)
 	}
 
 	if (p->reset_gpio)
-		gpiod_direction_output(p->reset_gpio, 1);
+		gpiod_direction_output(p->reset_gpio, 0);
 
 	if (p->enable_gpio)
 		gpiod_direction_output(p->enable_gpio, 0);
+
+	if (p->enable1_gpio)
+		gpiod_direction_output(p->enable1_gpio, 0);
 
 	panel_simple_regulator_disable(panel);
 
@@ -637,8 +643,24 @@ static int panel_simple_prepare(struct drm_panel *panel)
 		return err;
 	}
 
+	if (p->reset_gpio)
+		gpiod_direction_output(p->reset_gpio, 0);
+
+	panel_simple_sleep(p->desc->delay.init);
+
+	if (p->enable_gpio)
+		gpiod_direction_output(p->enable_gpio, 0);
+	if (p->enable1_gpio)
+		gpiod_direction_output(p->enable1_gpio, 0);
+
+	panel_simple_sleep(p->desc->delay.init);
+
 	if (p->enable_gpio)
 		gpiod_direction_output(p->enable_gpio, 1);
+	if (p->enable1_gpio)
+		gpiod_direction_output(p->enable1_gpio, 1);
+
+	panel_simple_sleep(p->desc->delay.init);
 
 	if (p->desc && p->desc->delay.prepare)
 		panel_simple_sleep(p->desc->delay.prepare);
@@ -648,9 +670,6 @@ static int panel_simple_prepare(struct drm_panel *panel)
 
 	if (p->desc && p->desc->delay.reset)
 		panel_simple_sleep(p->desc->delay.reset);
-
-	if (p->reset_gpio)
-		gpiod_direction_output(p->reset_gpio, 0);
 
 	if (p->desc && p->desc->delay.init)
 		panel_simple_sleep(p->desc->delay.init);
@@ -855,12 +874,40 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
 		return err;
 	}
 
+	panel->enable1_gpio = devm_gpiod_get_optional(dev, "a_enable", 0);
+	if (IS_ERR(panel->enable1_gpio)) {
+		err = PTR_ERR(panel->enable1_gpio);
+		dev_err(dev, "failed to request enable GPIO: %d\n", err);
+		return err;
+	}
+
 	panel->reset_gpio = devm_gpiod_get_optional(dev, "reset", 0);
 	if (IS_ERR(panel->reset_gpio)) {
 		err = PTR_ERR(panel->reset_gpio);
 		dev_err(dev, "failed to request reset GPIO: %d\n", err);
 		return err;
 	}
+
+
+
+
+	panel->pinctrl = devm_pinctrl_get(dev);
+	if (IS_ERR(panel->pinctrl)) {
+		err = PTR_ERR(panel->pinctrl);
+		dev_err(dev, "failed to request enable pinctrl: %d\n", err);
+		return err;
+	}
+
+	panel->active_state = pinctrl_lookup_state(panel->pinctrl, "default");
+	if (IS_ERR(panel->active_state)) {
+		err = PTR_ERR(panel->active_state);
+		dev_err(dev, "failed to request enable active_state : %d\n", err);
+		return err;
+	}
+
+
+	if (panel->active_state)
+		pinctrl_select_state(panel->pinctrl, panel->active_state);
 
 	if (of_property_read_string(dev->of_node, "rockchip,cmd-type",
 				    &cmd_type))
@@ -995,6 +1042,9 @@ static void panel_simple_shutdown(struct device *dev)
 
 		if (panel->enable_gpio)
 			gpiod_direction_output(panel->enable_gpio, 0);
+
+		if (panel->enable1_gpio)
+			gpiod_direction_output(panel->enable1_gpio, 0);
 
 		panel_simple_regulator_disable(&panel->base);
 	}
