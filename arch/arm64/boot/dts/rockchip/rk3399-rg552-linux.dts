@@ -35,6 +35,11 @@
 	joypad: singleadc-joypad {
 		compatible = "singleadc-joypad";
 
+                pwms = <&pwm3 0 200000000 0>;		 
+                pwm-names = "enable";
+                rumble-boost-weak = <0x0000>;
+                rumble-boost-strong = <0x0000>;
+
 		joypad-name = "retrogame_joypad";
 		joypad-product = <0x1101>;
 		joypad-revision = <0x0100>;
@@ -89,6 +94,10 @@
 
 		/* poll device interval (ms), adc read interval */
 		poll-interval = <10>;
+
+		/* required for RG552(invert) */
+		invert-absx;
+		invert-absy;
 
 		/* gpio button auto repeat set value : default disable */
 		/*
