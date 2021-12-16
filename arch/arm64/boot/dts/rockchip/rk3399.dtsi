@@ -301,21 +301,7 @@
 		status = "disabled";
 	};
 
-	sdio0: dwmmc@fe310000 {
-		compatible = "rockchip,rk3399-dw-mshc",
-			     "rockchip,rk3288-dw-mshc";
-		reg = <0x0 0xfe310000 0x0 0x4000>;
-		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH 0>;
-		max-frequency = <150000000>;
-		clocks = <&cru HCLK_SDIO>, <&cru SCLK_SDIO>,
-			 <&cru SCLK_SDIO_DRV>, <&cru SCLK_SDIO_SAMPLE>;
-		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-		fifo-depth = <0x100>;
-		power-domains = <&power RK3399_PD_SDIOAUDIO>;
-		resets = <&cru SRST_SDIO0>;
-		reset-names = "reset";
-		status = "disabled";
-	};
+
 
 	sdmmc: dwmmc@fe320000 {
 		compatible = "rockchip,rk3399-dw-mshc",
@@ -334,6 +320,23 @@
 		reset-names = "reset";
 		status = "disabled";
 	};
+
+	sdio0: dwmmc@fe310000 {
+		compatible = "rockchip,rk3399-dw-mshc",
+			     "rockchip,rk3288-dw-mshc";
+		reg = <0x0 0xfe310000 0x0 0x4000>;
+		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH 0>;
+		max-frequency = <150000000>;
+		clocks = <&cru HCLK_SDIO>, <&cru SCLK_SDIO>,
+			 <&cru SCLK_SDIO_DRV>, <&cru SCLK_SDIO_SAMPLE>;
+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+		fifo-depth = <0x100>;
+		power-domains = <&power RK3399_PD_SDIOAUDIO>;
+		resets = <&cru SRST_SDIO0>;
+		reset-names = "reset";
+		status = "disabled";
+	};
+
 
 	sdhci: sdhci@fe330000 {
 		compatible = "rockchip,rk3399-sdhci-5.1", "arasan,sdhci-5.1";
@@ -1367,16 +1370,16 @@
 		downdifferential = <20>;
 		system-status-freq = <
 			/*system status         freq(KHz)*/
-			SYS_STATUS_NORMAL       800000
+			SYS_STATUS_NORMAL       856000
 			SYS_STATUS_REBOOT       400000
 			SYS_STATUS_SUSPEND      200000
 			SYS_STATUS_VIDEO_1080P  600000
-			SYS_STATUS_VIDEO_4K     800000
-			SYS_STATUS_VIDEO_4K_10B 800000
-			SYS_STATUS_PERFORMANCE  800000
-			SYS_STATUS_BOOST        800000
-			SYS_STATUS_DUALVIEW     800000
-			SYS_STATUS_ISP          800000
+			SYS_STATUS_VIDEO_4K     856000
+			SYS_STATUS_VIDEO_4K_10B 856000
+			SYS_STATUS_PERFORMANCE  856000
+			SYS_STATUS_BOOST        856000
+			SYS_STATUS_DUALVIEW     856000
+			SYS_STATUS_ISP          856000
 		>;
 		/* MRFIXIT: Disabled, control of bw based on freq is not necessary
 		vop-bw-dmc-freq = <
@@ -1601,7 +1604,6 @@
 			clock-names = "phyclk";
 			#clock-cells = <0>;
 			clock-output-names = "clk_usbphy0_480m";
-			power-domains = <&power RK3399_PD_PERIHP>;
 			status = "disabled";
 
 			u2phy0_host: host-port {
@@ -1629,7 +1631,6 @@
 			clock-names = "phyclk";
 			#clock-cells = <0>;
 			clock-output-names = "clk_usbphy1_480m";
-			power-domains = <&power RK3399_PD_PERIHP>;
 			status = "disabled";
 
 			u2phy1_host: host-port {
@@ -2651,7 +2652,8 @@
 
 			sdio0_clk: sdio0-clk {
 				rockchip,pins =
-					<2 25 RK_FUNC_1 &pcfg_pull_none>;
+					<2 25 RK_FUNC_1 &pcfg_pull_none>,
+					<2 17 RK_FUNC_GPIO &pcfg_pull_up>;
 			};
 
 			sdio0_cd: sdio0-cd {
@@ -2858,8 +2860,8 @@
 		uart0 {
 			uart0_xfer: uart0-xfer {
 				rockchip,pins =
-					<2 16 RK_FUNC_1 &pcfg_pull_up>,
-					<2 17 RK_FUNC_1 &pcfg_pull_none>;
+					<2 16 RK_FUNC_1 &pcfg_pull_up>;
+					
 			};
 
 			uart0_cts: uart0-cts {
