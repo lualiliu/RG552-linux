@@ -1669,10 +1669,10 @@ int rockchip_wifi_init_module_rtkwifi(void)
 int rockchip_wifi_init_module(void)
 #endif
 {
-#ifdef CONFIG_WIFI_LOAD_DRIVER_WHEN_KERNEL_BOOTUP
-    int type = get_wifi_chip_type();
-    if (type < WIFI_AP6XXX_SERIES || type == WIFI_ESP8089) return 0;
-#endif
+//#ifdef CONFIG_WIFI_LOAD_DRIVER_WHEN_KERNEL_BOOTUP
+//    int type = get_wifi_chip_type();
+//    if (type < WIFI_AP6XXX_SERIES || type == WIFI_ESP8089) return 0;
+//#endif
     printk("\n");
     printk("=======================================================\n");
     printk("==== Launching Wi-Fi driver! (Powered by Rockchip) ====\n");
@@ -1694,10 +1694,10 @@ void rockchip_wifi_exit_module_rtkwifi(void)
 void rockchip_wifi_exit_module(void)
 #endif
 {
-#ifdef CONFIG_WIFI_LOAD_DRIVER_WHEN_KERNEL_BOOTUP
-    int type = get_wifi_chip_type();
-    if (type < WIFI_AP6XXX_SERIES || type == WIFI_ESP8089) return;
-#endif
+//#ifdef CONFIG_WIFI_LOAD_DRIVER_WHEN_KERNEL_BOOTUP
+//    int type = get_wifi_chip_type();
+//    if (type < WIFI_AP6XXX_SERIES || type == WIFI_ESP8089) return;
+//#endif
     printk("\n");
     printk("=======================================================\n");
     printk("==== Dislaunching Wi-Fi driver! (Powered by Rockchip) ====\n");
@@ -1716,13 +1716,13 @@ module_init(rockchip_wifi_init_module_rtkwifi);
 module_exit(rockchip_wifi_exit_module_rtkwifi);
 #else
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 1, 0))
-#ifdef CONFIG_WIFI_LOAD_DRIVER_WHEN_KERNEL_BOOTUP
-late_initcall(rockchip_wifi_init_module_rtkwifi);
-module_exit(rockchip_wifi_exit_module_rtkwifi);
-#else
+//#ifdef CONFIG_WIFI_LOAD_DRIVER_WHEN_KERNEL_BOOTUP
+//late_initcall(rockchip_wifi_init_module_rtkwifi);
+//module_exit(rockchip_wifi_exit_module_rtkwifi);
+//#else
 module_init(rockchip_wifi_init_module_rtkwifi);
 module_exit(rockchip_wifi_exit_module_rtkwifi);
-#endif
+//#endif
 #else
 #ifdef CONFIG_ANDROID_4_2
 module_init(rockchip_wifi_init_module);

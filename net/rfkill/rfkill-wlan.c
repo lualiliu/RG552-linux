@@ -136,6 +136,8 @@ int get_wifi_chip_type(void)
         type = WIFI_AP6493;                    
     } else if (strcmp(wifi_chip_type_string, "rtl8188eu") == 0) {
         type = WIFI_RTL8188EU;
+    } else if (strcmp(wifi_chip_type_string, "rtl8188fu") == 0) {
+        type = WIFI_RTL8188FU;
     } else if (strcmp(wifi_chip_type_string, "rtl8192du") == 0) {
         type = WIFI_RTL8192DU;
     } else if (strcmp(wifi_chip_type_string, "rtl8723as") == 0) {
