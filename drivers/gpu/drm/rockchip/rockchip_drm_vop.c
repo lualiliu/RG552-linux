@@ -4846,6 +4846,9 @@ static void vop_unbind(struct device *dev, struct device *master, void *data)
 {
 	struct vop *vop = dev_get_drvdata(dev);
 
+	/* Fix DRM freeze. */
+	enable_irq(vop->irq);
+
 	pm_runtime_disable(dev);
 	vop_destroy_crtc(vop);
 }
